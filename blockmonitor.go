@@ -13,7 +13,7 @@ import (
 
 const (
 	// MaxTimes is a max try to sending messages
-	MaxTimes = 5 // the times try sends message
+	MaxTimes = 3 // the times try sends message
 	MaxNodes = 7 // number of nodes to check
 	MinutePeriod = 5 // check every MinutePeriod minutes
 )
@@ -23,7 +23,7 @@ func blockHeightMonitor(ctx *cli.Context) {
 		SendCount: 0,
 	}
 
-	teleClient, err := helpers.NewTeleClientFromFlag(ctx)
+	teleClient, err, startingInfo := helpers.NewTeleClientFromFlag(ctx)
 	if err != nil {
 		log.Printf("can not init telegram bot %s", err.Error())
 		return
@@ -36,8 +36,11 @@ func blockHeightMonitor(ctx *cli.Context) {
 		last_consensused_block_height = append(last_consensused_block_height, 0)
 	}
 
+	isLastTimeChanged := true
 	second := MinutePeriod * 60
 	fmt.Printf("Check for every %d seconds\n", second)
+	caption := fmt.Sprintf("Monitoring bot started, checks for every %d seconds\nSend %d messages in maximum", second, MaxTimes)
+	sendAlert(client, startingInfo, caption, true)
 	for {
 		var tmp = []int {}
 		for i := 0; i < MaxNodes; i ++ {
@@ -49,12 +52,14 @@ func blockHeightMonitor(ctx *cli.Context) {
 		fmt.Println("failedNode len", len(failedNode))
 		caption := ""
 		if len(failedNode) > 0 {
+			isLastTimeChanged = false
 			for i := 0; i < len(failedNode); i ++ {
 				caption = caption + fmt.Sprintf("node=%d: last_consensused_block_height=%d, current=%d\n", failedNode[i], tmp[failedNode[i] - 1], last_consensused_block_height[failedNode[i] - 1])
 			}
-			sendAlert(client, "NO CHANGE - No alert sent", caption, true)
-			fmt.Println("Alert sent")
+			sendAlert(client, "Found no change in last_consensused_block_height - Alert sent", caption, isLastTimeChanged)
+			fmt.Println("Alert sent: {:?}", caption)
 		} else {
+			isLastTimeChanged = true
 			fmt.Println("Last consensused height changed")
 		}
 
@@ -62,14 +67,14 @@ func blockHeightMonitor(ctx *cli.Context) {
 	}
 }
 func sendAlert(client *Client, msg string, caption string, forceSend bool) {
-	log.Print("enter sendAlert")
 	if forceSend {
 		// send message not increase counter
 		log.Printf("================send msg: %s", msg)
 		client.TeleClient.SendMessage(msg, caption)
+		client.SendCount = 1
 		return
 	}
-	if client.SendCount >= MaxTimes {
+	if client.SendCount > MaxTimes {
 		return
 	}
 	log.Printf("================send msg: %s", msg)
