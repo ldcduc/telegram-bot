@@ -46,13 +46,13 @@ func NewTeleClientFlag() []cli.Flag {
 }
 
 
-func NewTeleClientFromFlag(ctx *cli.Context) (*Telegram, error, string) {
+func NewTeleClientFromFlag(ctx *cli.Context, MaxNodes int) (*Telegram, error, string) {
 	var (
 		botAPIToken = ctx.String(botAPITokenFlag.Name)
 		chatID      = ctx.Int64(chatIDFlag.Name)
 	)
 
-	startingInfo := "7 nodes scenario"
+	startingInfo := fmt.Sprintf("%d node(s) scenario", MaxNodes)
 
 	telegram := &Telegram{
 		ChatId:  chatID,
@@ -66,7 +66,7 @@ func NewTeleClientFromFlag(ctx *cli.Context) (*Telegram, error, string) {
 
 	if len(os.Args) > 2 {
 		if os.Args[len(os.Args) - 1] != "test" {
-			startingInfo = fmt.Sprintf("7 nodes scenario: %s", os.Args[len(os.Args) - 1])
+			startingInfo = fmt.Sprintf("%d node(s) scenario: %s", MaxNodes, os.Args[len(os.Args) - 1])
 		}
 	}	
 

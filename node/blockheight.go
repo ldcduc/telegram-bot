@@ -9,11 +9,11 @@ import (
 )
 
 const (
-	host     = ""
-	port     = 8000
-	user     = ""
-	password = ""
-	dbname   = ""
+	host     = 
+	port     = 
+	user     = 
+	password = 
+	dbname   = 
 )
 
 func GetPsqlInfo(offset int) string {

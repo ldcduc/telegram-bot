@@ -23,7 +23,7 @@ func blockHeightMonitor(ctx *cli.Context) {
 		SendCount: 0,
 	}
 
-	teleClient, err, startingInfo := helpers.NewTeleClientFromFlag(ctx)
+	teleClient, err, startingInfo := helpers.NewTeleClientFromFlag(ctx, MaxNodes)
 	if err != nil {
 		log.Printf("can not init telegram bot %s", err.Error())
 		return
@@ -39,7 +39,7 @@ func blockHeightMonitor(ctx *cli.Context) {
 	isLastTimeChanged := true
 	second := MinutePeriod * 60
 	fmt.Printf("Check for every %d seconds\n", second)
-	caption := fmt.Sprintf("Monitoring bot started, checks for every %d seconds\nSend %d messages in maximum", second, MaxTimes)
+	caption := fmt.Sprintf("Monitoring bot started, checks for every %d seconds\nSend %d messages in maximum if failed", second, MaxTimes)
 	sendAlert(client, startingInfo, caption, true)
 	for {
 		var tmp = []int {}
