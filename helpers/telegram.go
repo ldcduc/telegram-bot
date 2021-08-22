@@ -3,6 +3,7 @@ package helpers
 import (
 	"fmt"
 	"os"
+	"strconv"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/urfave/cli"
@@ -14,10 +15,7 @@ var (
 		Usage: "The API token",
 		Value: "", // Bot in real alert group
 	}
-	botAPITokenFlagTest = cli.StringFlag{
-		Name:  "apiToken",
-		Usage: "The API token",
-		Value: "", // Bot for testing
+	botAPITokenFlagTest = []cli.StringFlag {
 	}
 	chatIDFlag = cli.Int64Flag{
 		Name:  "chatId",
@@ -36,10 +34,20 @@ type Telegram struct {
 	IsDebug bool
 }
 
+// ./telegram_bot start test id 'message'
+// ./telegram_bot start id 'message'
+
 func NewTeleClientFlag() []cli.Flag {
 	if len(os.Args) > 2 {
 		if os.Args[2] == "test" {
-			return []cli.Flag{botAPITokenFlagTest, chatIDFlagTest}
+			id, err := strconv.Atoi(os.Args[3]);
+			if err != nil {
+				id = 0
+			} 
+			if id >= len(botAPITokenFlagTest) {
+				id = len(botAPITokenFlagTest) - 1
+			}
+			return []cli.Flag{botAPITokenFlagTest[id], chatIDFlagTest}
 		}
 	}	
 	return []cli.Flag{botAPITokenFlag, chatIDFlag}

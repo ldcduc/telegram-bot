@@ -25,7 +25,6 @@ func GetPsqlInfo(offset int) string {
 }
 
 func Check_last_consensused_height(maxNode int, last_consensused_block_height []int, failedNode []int) []int {
-	log.Printf("Checking last consensused height")
 	for nodeIndex := 1; nodeIndex <= maxNode; nodeIndex ++ {
 		db, err := sql.Open("postgres", GetPsqlInfo(nodeIndex)) // 9000 + offset
 		if err != nil {

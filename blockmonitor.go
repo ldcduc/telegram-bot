@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/urfave/cli"
@@ -25,10 +24,10 @@ func blockHeightMonitor(ctx *cli.Context) {
 
 	teleClient, err, startingInfo := helpers.NewTeleClientFromFlag(ctx, MaxNodes)
 	if err != nil {
-		log.Printf("can not init telegram bot %s", err.Error())
+		fmt.Printf("can not init telegram bot %s", err.Error())
 		return
 	}
-	log.Print("Connected to Telegram")
+	fmt.Print("Connected to Telegram")
 	client.TeleClient = teleClient
 	
 	var last_consensused_block_height = []int {}
@@ -69,7 +68,7 @@ func blockHeightMonitor(ctx *cli.Context) {
 func sendAlert(client *Client, msg string, caption string, forceSend bool) {
 	if forceSend {
 		// send message not increase counter
-		log.Printf("================send msg: %s", msg)
+		fmt.Printf("================send msg: %s", msg)
 		client.TeleClient.SendMessage(msg, caption)
 		client.SendCount = 1
 		return
@@ -77,7 +76,7 @@ func sendAlert(client *Client, msg string, caption string, forceSend bool) {
 	if client.SendCount > MaxTimes {
 		return
 	}
-	log.Printf("================send msg: %s", msg)
+	fmt.Printf("================send msg: %s", msg)
 	client.TeleClient.SendMessage(msg, caption)
 	client.SendCount++
 }
