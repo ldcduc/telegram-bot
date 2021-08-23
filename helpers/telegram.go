@@ -20,12 +20,12 @@ var (
 	chatIDFlag = cli.Int64Flag{
 		Name:  "chatId",
 		Usage: "The ID of group/chanel",
-		Value: , // Real alert group
+		Value: -572689309, // Real alert group
 	}
 	chatIDFlagTest = cli.Int64Flag{
 		Name:  "chatId",
 		Usage: "The ID of group/chanel",
-		Value: , // Group for testing
+		Value: -533307840, // Group for testing
 	}
 )
 type Telegram struct {
@@ -42,12 +42,12 @@ func NewTeleClientFlag() []cli.Flag {
 		if os.Args[2] == "test" {
 			id, err := strconv.Atoi(os.Args[3]);
 			if err != nil {
-				id = 0
+				id = 1
 			} 
 			if id >= len(botAPITokenFlagTest) {
-				id = len(botAPITokenFlagTest) - 1
+				id = len(botAPITokenFlagTest)
 			}
-			return []cli.Flag{botAPITokenFlagTest[id], chatIDFlagTest}
+			return []cli.Flag{botAPITokenFlagTest[id - 1], chatIDFlagTest}
 		}
 	}	
 	return []cli.Flag{botAPITokenFlag, chatIDFlag}

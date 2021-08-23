@@ -59,7 +59,8 @@ func blockHeightMonitor(ctx *cli.Context) {
 			fmt.Println("Alert sent: {:?}", caption)
 		} else {
 			isLastTimeChanged = true
-			fmt.Println("Last consensused height changed")
+			currentTime := time.Now()
+			fmt.Println(currentTime.Format("2006-01-02 15:04:05"), "Last consensused height changed")
 		}
 
 		time.Sleep(time.Second * time.Duration(second))
