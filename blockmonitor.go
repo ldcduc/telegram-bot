@@ -61,7 +61,19 @@ func blockHeightMonitor(ctx *cli.Context) {
 			fmt.Println("Alert sent:", caption)
 			if !isLastTimeChanged && client.SendCount > MaxTimes { // not forceSend + sent enough messages
 				client.SendCount = 0
-				deadNode = append(deadNode, failedNode...)
+				// Append failedNode into deadNode
+				for _, fnode := range failedNode {
+					existed := false
+					for _, dnode := range deadNode {
+						if fnode == dnode {
+							existed = true
+						}
+					}
+					if !existed {
+						deadNode = append(deadNode, fnode)
+					}
+				}
+				//
 				if len(deadNode) == MaxNodes {
 					sendAlert(client, "All nodes have been dead", "Monitoring bot stopped", isLastTimeChanged)
 					fmt.Println("Monitoring bot stopped: All nodes have been dead")
